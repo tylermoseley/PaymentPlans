@@ -66,6 +66,7 @@ if __name__ == '__main__':
             UpdatedPayPlans.set_index('Payment Ruleset Code:Name', inplace=True)
 
             amount_columns = UpdatedPayPlans.filter(like='Amount ($)').columns
+            amount_columns = [col[-5:] for col in amount_columns]
             MarketingUpdatesMod[amount_columns] = MarketingUpdatesMod[amount_columns].astype(float)
             UpdatedPayPlans = UpdatedPayPlans.drop('RULENAME', axis=1)
             UpdatedPayPlans.update(MarketingUpdatesMod, overwrite=True)
