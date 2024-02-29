@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 from openpyxl import load_workbook
 from openpyxl.styles import Font, PatternFill
 import tempfile
@@ -58,6 +59,9 @@ if __name__ == '__main__':
             SpecialtyMod = SpecialtyMod.pivot_table(index='Payment Ruleset Code:Name', columns='PROFILECODE',
                                                     values='new Fee')
             SpecialtyMod.columns = ["Amount ($): " + col for col in SpecialtyMod.columns]
+
+            pd.set_option('future.no_silent_downcasting', True)
+            MarketingUpdatesMod = MarketingUpdatesMod.replace(0, np.nan)
 
             UpdatedPayPlans = PayPlans.copy()
             UpdatedPayPlans = pd.DataFrame({
