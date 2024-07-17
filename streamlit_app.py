@@ -61,7 +61,7 @@ if __name__ == '__main__':
             SpecialtyMod.columns = ["Amount ($): " + col for col in SpecialtyMod.columns]
 
             pd.set_option('future.no_silent_downcasting', True)
-            MarketingUpdatesMod = MarketingUpdatesMod.replace(0, np.nan)
+            # MarketingUpdatesMod = MarketingUpdatesMod.replace(0, np.nan)
 
             UpdatedPayPlans = PayPlans.copy()
             UpdatedPayPlans = pd.DataFrame({
@@ -75,6 +75,9 @@ if __name__ == '__main__':
             UpdatedPayPlans = UpdatedPayPlans.drop('RULENAME', axis=1)
             UpdatedPayPlans.update(MarketingUpdatesMod, overwrite=True)
             UpdatedPayPlans.update(SpecialtyMod)
+            ##
+            UpdatedPayPlans = UpdatedPayPlans.replace(0, np.nan)
+            ##
             priority_columns = UpdatedPayPlans.filter(like='Priority:').columns
             UpdatedPayPlans[priority_columns] = UpdatedPayPlans[priority_columns].astype('Int64')
 
