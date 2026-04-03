@@ -7,6 +7,11 @@ import tempfile
 import warnings
 import copy
 
+import sys
+
+st.write("Python version:", sys.version)
+st.write("Pandas version:", pd.__version__)
+
 if __name__ == '__main__':
 
     # Header and uploads
