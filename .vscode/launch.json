@@ -1,0 +1,13 @@
+{
+"name": "Debug Streamlit",
+"type": "python",
+"request": "launch",
+"module": "streamlit",
+"args": [
+"run",
+"streamlit_app.py",
+"--server.runOnSave=false"
+],
+"jinja": true,
+"justMyCode": false
+}

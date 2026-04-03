@@ -12,6 +12,18 @@ import sys
 st.write("Python version:", sys.version)
 st.write("Pandas version:", pd.__version__)
 
+
+def apply_payment_updates(target_df, source_df):
+    overlapping_columns = source_df.columns.intersection(target_df.columns)
+
+    for col in overlapping_columns:
+        incoming = source_df[col].reindex(target_df.index)
+        if col.startswith('Amount ($):'):
+            incoming = pd.to_numeric(incoming, errors='coerce')
+        target_df[col] = target_df[col].where(incoming.isna(), incoming)
+
+    return target_df
+
 if __name__ == '__main__':
 
     # Header and uploads
@@ -78,8 +90,8 @@ if __name__ == '__main__':
             # amount_columns = [col[-5:] for col in amount_columns]
             # MarketingUpdatesMod[amount_columns] = MarketingUpdatesMod[amount_columns].astype(float)
             UpdatedPayPlans = UpdatedPayPlans.drop('RULENAME', axis=1)
-            UpdatedPayPlans.update(MarketingUpdatesMod, overwrite=True)
-            UpdatedPayPlans.update(SpecialtyMod)
+            UpdatedPayPlans = apply_payment_updates(UpdatedPayPlans, MarketingUpdatesMod)
+            UpdatedPayPlans = apply_payment_updates(UpdatedPayPlans, SpecialtyMod)
             ##
             UpdatedPayPlans = UpdatedPayPlans.replace(0, np.nan)
             ##
