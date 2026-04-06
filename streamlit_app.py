@@ -172,18 +172,30 @@ if __name__ == '__main__':
                 # Iterate over the DataFrame and update the cells starting from row 13 in Excel (index 12 in openpyxl)
                 for r in range(df.shape[0]):
                     for c in range(df.shape[1]):
-                        if not pd.isna(df.iloc[r, c]):
-                            cell = ws.cell(row=r + 13, column=c + 1, value=df.iloc[r, c])
-                            column_name = df.columns[c]
-                            row_name = df.index[r]
-                            if column_name in diff1.columns and row_name in diff1.index:
-                                if diff1.loc[row_name, column_name]:
-                                    cell.fill = PatternFill(start_color='ADD8E6', end_color='ADD8E6', fill_type='solid')
-                                    cell.font = Font(color='000000')
-                            if column_name in diff2.columns and row_name in diff2.index:
-                                if diff2.loc[row_name, column_name]:
-                                    cell.fill = PatternFill(start_color='90EE90', end_color='90EE90', fill_type='solid')
-                                    cell.font = Font(color='000000')
+                        column_name = df.columns[c]
+                        row_name = df.index[r]
+                        marketing_changed = (
+                            column_name in diff1.columns
+                            and row_name in diff1.index
+                            and diff1.loc[row_name, column_name]
+                        )
+                        specialty_changed = (
+                            column_name in diff2.columns
+                            and row_name in diff2.index
+                            and diff2.loc[row_name, column_name]
+                        )
+                        cell_changed = marketing_changed or specialty_changed
+
+                        if cell_changed or not pd.isna(df.iloc[r, c]):
+                            cell_value = None if pd.isna(df.iloc[r, c]) else df.iloc[r, c]
+                            cell = ws.cell(row=r + 13, column=c + 1, value=cell_value)
+
+                            if marketing_changed:
+                                cell.fill = PatternFill(start_color='ADD8E6', end_color='ADD8E6', fill_type='solid')
+                                cell.font = Font(color='000000')
+                            if specialty_changed:
+                                cell.fill = PatternFill(start_color='90EE90', end_color='90EE90', fill_type='solid')
+                                cell.font = Font(color='000000')
 
                 # Save the modified workbook to another temporary file
                 with tempfile.NamedTemporaryFile(delete=False, suffix='.xlsx') as tmp_modified:
